@@ -115,11 +115,9 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 				st.user = arg.Value.(string)
 				hs.Add(_trinoUserHeader, st.user)
 			case _trinoQueryCallbackHeader:
-				if callback, ok := arg.Value.(QueryCallBack); ok {
-					// set callback
-					st.conn.callback = callback
-				} else {
-					return nil, driver.ErrSkip
+				err := st.conn.CheckNamedValue(&arg)
+				if err != nil {
+					return nil, err
 				}
 			default:
 				s, err := Serial(arg.Value)

@@ -143,6 +143,23 @@ func (c *Conn) Close() error {
 	return nil
 }
 
+// CheckNamedValue check if NamedValue is by type assertion & implements driver.NamedValueChecker
+func (c *Conn) CheckNamedValue(value *driver.NamedValue) error {
+	callback, ok := value.Value.(QueryCallBack)
+	if ok {
+		c.callback = callback
+		return driver.ErrRemoveArgument
+	}
+
+	return driver.ErrSkip
+}
+
+// ResetSession resets callback to nil & implements driver.SessionResetter
+func (c *Conn) ResetSession(ctx context.Context) error {
+	c.callback = nil
+	return nil
+}
+
 func (c *Conn) newRequest(method, url string, body io.Reader, hs http.Header) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
