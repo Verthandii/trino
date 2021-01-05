@@ -27,6 +27,8 @@ type Conn struct {
 	httpHeaders     http.Header
 	kerberosClient  client.Client
 	kerberosEnabled bool
+
+	callback QueryCallBack
 }
 
 var (

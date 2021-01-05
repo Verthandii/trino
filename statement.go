@@ -115,7 +115,12 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 				st.user = arg.Value.(string)
 				hs.Add(_trinoUserHeader, st.user)
 			case _trinoQueryCallbackHeader:
-				// TODO callback
+				if callback, ok := arg.Value.(QueryCallBack); ok {
+					// set callback
+					st.conn.callback = callback
+				} else {
+					return nil, driver.ErrSkip
+				}
 			default:
 				s, err := Serial(arg.Value)
 				if err != nil {
@@ -158,6 +163,22 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 		stmt:    st,
 		nextURI: sr.NextURI,
 	}
+
+	// first callback
+	if st.conn.callback != nil {
+		st.conn.callback.OnUpdated(QueryInfo{
+			Id:         sr.ID,
+			QueryStats: sr.Stats,
+			Cancel: func() error {
+				req, err := st.conn.newRequest("DELETE", sr.NextURI, nil, hs)
+				if err != nil {
+					return err
+				}
+				return cancelQuery(req, st.conn.httpClient)
+			},
+		})
+	}
+
 	if err = rows.fetch(false); err != nil {
 		return nil, err
 	}

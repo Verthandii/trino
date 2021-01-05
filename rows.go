@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -178,6 +179,27 @@ func (qr *driverRows) fetch(allowEOF bool) error {
 	qr.data = qresp.Data
 	qr.nextURI = qresp.NextURI
 
+	// callback
+	cancelUri := qresp.NextURI
+	if qresp.PartialCancelURI != "" {
+		cancelUri = qresp.PartialCancelURI
+	}
+	cancelFunc := func() error {
+		req, err := qr.stmt.conn.newRequest("DELETE", cancelUri, nil, hs)
+		if err != nil {
+			return err
+		}
+		return cancelQuery(req, qr.stmt.conn.httpClient)
+	}
+
+	if qr.stmt.conn.callback != nil {
+		qr.stmt.conn.callback.OnUpdated(QueryInfo{
+			Id:         qresp.ID,
+			QueryStats: qresp.Stats,
+			Cancel:     cancelFunc,
+		})
+	}
+
 	if len(qr.data) == 0 {
 		if qr.nextURI != "" {
 			return qr.fetch(allowEOF)
@@ -199,4 +221,17 @@ func (qr *driverRows) initColumns(qresp *queryResponse) {
 		qr.columns[i] = col.Name
 		qr.coltype[i] = newTypeConverter(col.Type)
 	}
+}
+
+func cancelQuery(req *http.Request, client http.Client) error {
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return errors.New(fmt.Sprintf("cancel query error: http status is %s", resp.Status))
+	}
+
+	return nil
 }
