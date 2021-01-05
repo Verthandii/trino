@@ -28,7 +28,7 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	c := &DSNCfg{
+	c := &Config{
 		ServerURI:         "http://foobar@localhost:8080",
 		SessionProperties: map[string]string{"query_priority": "1"},
 	}
@@ -43,7 +43,7 @@ func TestConfig(t *testing.T) {
 }
 
 func TestConfigSSLCertPath(t *testing.T) {
-	c := &DSNCfg{
+	c := &Config{
 		ServerURI:         "https://foobar@localhost:8080",
 		SessionProperties: map[string]string{"query_priority": "1"},
 		SSLCertPath:       "cert.pem",
@@ -59,7 +59,7 @@ func TestConfigSSLCertPath(t *testing.T) {
 }
 
 func TestConfigWithoutSSLCertPath(t *testing.T) {
-	c := &DSNCfg{
+	c := &Config{
 		ServerURI:         "https://foobar@localhost:8080",
 		SessionProperties: map[string]string{"query_priority": "1"},
 	}
@@ -74,7 +74,7 @@ func TestConfigWithoutSSLCertPath(t *testing.T) {
 }
 
 func TestKerberosConfig(t *testing.T) {
-	c := &DSNCfg{
+	c := &Config{
 		ServerURI:          "https://foobar@localhost:8090",
 		SessionProperties:  map[string]string{"query_priority": "1"},
 		KerberosEnabled:    "true",
@@ -96,7 +96,7 @@ func TestKerberosConfig(t *testing.T) {
 }
 
 func TestInvalidKerberosConfig(t *testing.T) {
-	c := &DSNCfg{
+	c := &Config{
 		ServerURI:       "http://foobar@localhost:8090",
 		KerberosEnabled: "true",
 	}
@@ -107,7 +107,7 @@ func TestInvalidKerberosConfig(t *testing.T) {
 }
 
 func TestConfigWithMalformedURL(t *testing.T) {
-	_, err := (&DSNCfg{ServerURI: ":("}).FormatDSN()
+	_, err := (&Config{ServerURI: ":("}).FormatDSN()
 	if err == nil {
 		t.Fatal("dsn generated from malformed url")
 	}
@@ -204,7 +204,7 @@ func TestAuthFailure(t *testing.T) {
 }
 
 func TestQueryForUsername(t *testing.T) {
-	c := &DSNCfg{
+	c := &Config{
 		ServerURI:         "http://foobar@localhost:8080",
 		SessionProperties: map[string]string{"query_priority": "1"},
 	}

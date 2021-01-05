@@ -1,6 +1,13 @@
 package trino
 
-import "database/sql/driver"
+import (
+	"database/sql"
+	"database/sql/driver"
+)
+
+func init() {
+	sql.Register("trino", &sqldriver{})
+}
 
 // sqldriver implements driver.Driver
 type sqldriver struct{}

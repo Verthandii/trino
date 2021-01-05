@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// DSNCfg is a configuration that can be encoded to a DSN string.
-type DSNCfg struct {
+// Config is a configuration that can be encoded to a DSN string.
+type Config struct {
 	ServerURI          string            // URI of the Trino server, e.g. http://user@localhost:8080
 	Source             string            // Source of the connection (optional)
 	Catalog            string            // Catalog (optional)
@@ -24,7 +24,7 @@ type DSNCfg struct {
 }
 
 // FormatDSN returns a DSN string from the configuration.
-func (c *DSNCfg) FormatDSN() (string, error) {
+func (c *Config) FormatDSN() (string, error) {
 	serverURL, err := url.Parse(c.ServerURI)
 	if err != nil {
 		return "", err

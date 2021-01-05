@@ -177,6 +177,7 @@ func (qr *driverRows) fetch(allowEOF bool) error {
 	qr.rowindex = 0
 	qr.data = qresp.Data
 	qr.nextURI = qresp.NextURI
+
 	if len(qr.data) == 0 {
 		if qr.nextURI != "" {
 			return qr.fetch(allowEOF)

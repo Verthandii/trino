@@ -58,6 +58,23 @@ type stmtStats struct {
 	RootStage       stmtStage `json:"rootStage"`
 }
 
+type stmtStage struct {
+	StageID         string      `json:"stageId"`
+	State           string      `json:"state"`
+	Done            bool        `json:"done"`
+	Nodes           int         `json:"nodes"`
+	TotalSplits     int         `json:"totalSplits"`
+	QueuedSplits    int         `json:"queuedSplits"`
+	RunningSplits   int         `json:"runningSplits"`
+	CompletedSplits int         `json:"completedSplits"`
+	UserTimeMillis  int         `json:"userTimeMillis"`
+	CPUTimeMillis   int         `json:"cpuTimeMillis"`
+	WallTimeMillis  int         `json:"wallTimeMillis"`
+	ProcessedRows   int         `json:"processedRows"`
+	ProcessedBytes  int         `json:"processedBytes"`
+	SubStages       []stmtStage `json:"subStages"`
+}
+
 type stmtError struct {
 	Message       string               `json:"message"`
 	ErrorName     string               `json:"errorName"`
@@ -81,23 +98,6 @@ func (e stmtError) Error() string {
 	return e.FailureInfo.Type + ": " + e.Message
 }
 
-type stmtStage struct {
-	StageID         string      `json:"stageId"`
-	State           string      `json:"state"`
-	Done            bool        `json:"done"`
-	Nodes           int         `json:"nodes"`
-	TotalSplits     int         `json:"totalSplits"`
-	QueuedSplits    int         `json:"queuedSplits"`
-	RunningSplits   int         `json:"runningSplits"`
-	CompletedSplits int         `json:"completedSplits"`
-	UserTimeMillis  int         `json:"userTimeMillis"`
-	CPUTimeMillis   int         `json:"cpuTimeMillis"`
-	WallTimeMillis  int         `json:"wallTimeMillis"`
-	ProcessedRows   int         `json:"processedRows"`
-	ProcessedBytes  int         `json:"processedBytes"`
-	SubStages       []stmtStage `json:"subStages"`
-}
-
 func (st *driverStmt) Query(args []driver.Value) (driver.Rows, error) {
 	return nil, driver.ErrSkip
 }
@@ -110,14 +110,17 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 		hs = make(http.Header)
 		var ss []string
 		for _, arg := range args {
-			s, err := Serial(arg.Value)
-			if err != nil {
-				return nil, err
-			}
-			if arg.Name == _trinoUserHeader {
+			switch arg.Name {
+			case _trinoUserHeader:
 				st.user = arg.Value.(string)
 				hs.Add(_trinoUserHeader, st.user)
-			} else {
+			case _trinoQueryCallbackHeader:
+				// TODO callback
+			default:
+				s, err := Serial(arg.Value)
+				if err != nil {
+					return nil, err
+				}
 				if hs.Get(_preparedStatementHeader) == "" {
 					hs.Add(_preparedStatementHeader, _preparedStatementName+"="+url.QueryEscape(st.query))
 				}
