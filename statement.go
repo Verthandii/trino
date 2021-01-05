@@ -43,19 +43,20 @@ type stmtResponse struct {
 }
 
 type stmtStats struct {
-	State           string    `json:"state"`
-	Scheduled       bool      `json:"scheduled"`
-	Nodes           int       `json:"nodes"`
-	TotalSplits     int       `json:"totalSplits"`
-	QueuesSplits    int       `json:"queuedSplits"`
-	RunningSplits   int       `json:"runningSplits"`
-	CompletedSplits int       `json:"completedSplits"`
-	UserTimeMillis  int       `json:"userTimeMillis"`
-	CPUTimeMillis   int       `json:"cpuTimeMillis"`
-	WallTimeMillis  int       `json:"wallTimeMillis"`
-	ProcessedRows   int       `json:"processedRows"`
-	ProcessedBytes  int       `json:"processedBytes"`
-	RootStage       stmtStage `json:"rootStage"`
+	State              string    `json:"state"`
+	ProgressPercentage float32   `json:"progressPercentage"`
+	Scheduled          bool      `json:"scheduled"`
+	Nodes              int       `json:"nodes"`
+	TotalSplits        int       `json:"totalSplits"`
+	QueuesSplits       int       `json:"queuedSplits"`
+	RunningSplits      int       `json:"runningSplits"`
+	CompletedSplits    int       `json:"completedSplits"`
+	UserTimeMillis     int       `json:"userTimeMillis"`
+	CPUTimeMillis      int       `json:"cpuTimeMillis"`
+	WallTimeMillis     int       `json:"wallTimeMillis"`
+	ProcessedRows      int       `json:"processedRows"`
+	ProcessedBytes     int       `json:"processedBytes"`
+	RootStage          stmtStage `json:"rootStage"`
 }
 
 type stmtStage struct {
