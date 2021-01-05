@@ -1,4 +1,4 @@
-module github.com/CryBecase/trino-client
+module github.com/CryBecase/trino
 
 go 1.15
 

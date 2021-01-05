@@ -32,7 +32,7 @@ You need a working environment with Go installed and $GOPATH set.
 Download and install Trino database/sql driver:
 
 ```bash
-go get github.com/CryBecase/trino-client
+go get github.com/CryBecase/trino
 ```
 
 Make sure you have Git installed and in your $PATH.
@@ -49,7 +49,7 @@ Example:
 
 ```go
 import "database/sql"
-import _ "github.com/CryBecase/trino-client"
+import _ "github.com/CryBecase/trino"
 
 dsn := "http://user@localhost:8080?catalog=default&schema=test"
 db, err := sql.Open("trino", dsn)

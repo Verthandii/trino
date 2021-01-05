@@ -44,7 +44,7 @@
 // The driver should be used via the database/sql package:
 //
 //  import "database/sql"
-//  import _ "github.com/trinodb/trino-go-client/trino"
+//  import _ "github.com/CryBecase/trino"
 //
 //  dsn := "http://user@localhost:8080?catalog=default&schema=test"
 //  db, err := sql.Open("trino", dsn)
