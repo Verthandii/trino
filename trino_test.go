@@ -218,7 +218,7 @@ func TestQueryForUsername(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	rows, err := db.Query("SELECT current_user", sql.Named("X-Presto-User", string("TestUser")))
+	rows, err := db.Query("SELECT current_user", sql.Named("X-Presto-User", "TestUser"))
 	if err != nil {
 		t.Fatal("Failed executing query", err.Error())
 	}

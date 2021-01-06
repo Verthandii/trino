@@ -15,11 +15,14 @@ type driverStmt struct {
 	conn  *Conn
 	query string
 	user  string
+
+	callback QueryCallBack
 }
 
 var (
-	_ driver.Stmt             = &driverStmt{}
-	_ driver.StmtQueryContext = &driverStmt{}
+	_ driver.Stmt              = &driverStmt{}
+	_ driver.StmtQueryContext  = &driverStmt{}
+	_ driver.NamedValueChecker = &driverStmt{}
 )
 
 func (st *driverStmt) Close() error {
@@ -32,6 +35,21 @@ func (st *driverStmt) NumInput() int {
 
 func (st *driverStmt) Exec(args []driver.Value) (driver.Result, error) {
 	return nil, ErrOperationNotSupported
+}
+
+func (st *driverStmt) Query(args []driver.Value) (driver.Rows, error) {
+	return nil, driver.ErrSkip
+}
+
+// CheckNamedValue check if NamedValue is by type assertion & implements driver.NamedValueChecker
+func (st *driverStmt) CheckNamedValue(value *driver.NamedValue) error {
+	callback, ok := value.Value.(QueryCallBack)
+	if ok {
+		st.callback = callback
+		return driver.ErrRemoveArgument
+	}
+
+	return driver.ErrSkip
 }
 
 type stmtResponse struct {
@@ -99,10 +117,6 @@ func (e stmtError) Error() string {
 	return e.FailureInfo.Type + ": " + e.Message
 }
 
-func (st *driverStmt) Query(args []driver.Value) (driver.Rows, error) {
-	return nil, driver.ErrSkip
-}
-
 func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue) (driver.Rows, error) {
 	query := st.query
 	var hs http.Header
@@ -116,7 +130,8 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 				st.user = arg.Value.(string)
 				hs.Add(_trinoUserHeader, st.user)
 			case _trinoQueryCallbackHeader:
-				err := st.conn.CheckNamedValue(&arg)
+				// 正常情况下 sql.driverArgsConnLocked 中过滤掉了这个 case
+				err := st.CheckNamedValue(&arg)
 				if err != nil {
 					return nil, err
 				}
