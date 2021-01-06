@@ -1,19 +1,19 @@
 package trino
 
 const (
-	_preparedStatementHeader  = "X-Presto-Prepared-Statement"
-	_preparedStatementName    = "_trino_go"
-	_trinoUserHeader          = "X-Presto-User"
-	_trinoSourceHeader        = "X-Presto-Source"
-	_trinoCatalogHeader       = "X-Presto-Catalog"
-	_trinoSchemaHeader        = "X-Presto-Schema"
-	_trinoSessionHeader       = "X-Presto-Session"
-	_trinoQueryCallbackHeader = "X-Presto-Callback"
+	_preparedStatementHeader = "X-Presto-Prepared-Statement"
+	_preparedStatementName   = "_trino_go"
+	XTrinoUserHeader         = "X-Trino-User"
+	_xTrinoSourceHeader      = "X-Trino-Source"
+	_xTrinoCatalogHeader     = "X-Trino-Catalog"
+	_xTrinoSchemaHeader      = "X-Trino-Schema"
+	_xTrinoSessionHeader     = "X-Trino-Session"
+	XTrinoCallbackHeader     = "X-Trino-Callback"
 
-	KerberosEnabledConfig    = "KerberosEnabled"
-	kerberosKeytabPathConfig = "KerberosKeytabPath"
-	kerberosPrincipalConfig  = "KerberosPrincipal"
-	kerberosRealmConfig      = "KerberosRealm"
-	kerberosConfigPathConfig = "KerberosConfigPath"
-	SSLCertPathConfig        = "SSLCertPath"
+	KerberosEnabledConfig     = "KerberosEnabled"
+	_kerberosKeytabPathConfig = "KerberosKeytabPath"
+	_kerberosPrincipalConfig  = "KerberosPrincipal"
+	_kerberosRealmConfig      = "KerberosRealm"
+	_kerberosConfigPathConfig = "KerberosConfigPath"
+	SSLCertPathConfig         = "SSLCertPath"
 )

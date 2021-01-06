@@ -43,14 +43,20 @@ func (st *driverStmt) Query(args []driver.Value) (driver.Rows, error) {
 }
 
 // CheckNamedValue check if NamedValue is by type assertion & implements driver.NamedValueChecker
-func (st *driverStmt) CheckNamedValue(value *driver.NamedValue) error {
-	callback, ok := value.Value.(QueryCallBack)
-	if ok {
-		st.callback = callback
-		return driver.ErrRemoveArgument
+func (st *driverStmt) CheckNamedValue(arg *driver.NamedValue) error {
+	v, err := st.convertValue(arg.Value)
+	arg.Value = v
+	return err
+}
+
+func (st *driverStmt) convertValue(v interface{}) (driver.Value, error) {
+	switch vr := (v).(type) {
+	case QueryCallBack:
+		st.callback = vr
+		return nil, driver.ErrRemoveArgument
 	}
 
-	return driver.ErrSkip
+	return driver.DefaultParameterConverter.ConvertValue(v)
 }
 
 type stmtResponse struct {
@@ -127,10 +133,10 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 		var ss []string
 		for _, arg := range args {
 			switch arg.Name {
-			case _trinoUserHeader:
+			case XTrinoUserHeader:
 				st.user = arg.Value.(string)
-				hs.Add(_trinoUserHeader, st.user)
-			case _trinoQueryCallbackHeader:
+				hs.Add(XTrinoUserHeader, st.user)
+			case XTrinoCallbackHeader:
 				// 正常情况下 sql.driverArgsConnLocked 中过滤掉了这个 case
 				err := st.CheckNamedValue(&arg)
 				if err != nil {

@@ -47,13 +47,13 @@ func newConn(dsn string) (*Conn, error) {
 	var kerberosClient client.Client
 
 	if kerberosEnabled {
-		kt, err := keytab.Load(query.Get(kerberosKeytabPathConfig))
+		kt, err := keytab.Load(query.Get(_kerberosKeytabPathConfig))
 		if err != nil {
 			return nil, fmt.Errorf("trino: Error loading Keytab: %v", err)
 		}
 
-		kerberosClient = client.NewClientWithKeytab(query.Get(kerberosPrincipalConfig), query.Get(kerberosRealmConfig), kt)
-		conf, err := config.Load(query.Get(kerberosConfigPathConfig))
+		kerberosClient = client.NewClientWithKeytab(query.Get(_kerberosPrincipalConfig), query.Get(_kerberosRealmConfig), kt)
+		conf, err := config.Load(query.Get(_kerberosConfigPathConfig))
 		if err != nil {
 			return nil, fmt.Errorf("trino: Error loading krb config: %v", err)
 		}
@@ -107,11 +107,11 @@ func newConn(dsn string) (*Conn, error) {
 	}
 
 	for k, v := range map[string]string{
-		_trinoUserHeader:    user,
-		_trinoSourceHeader:  query.Get("source"),
-		_trinoCatalogHeader: query.Get("catalog"),
-		_trinoSchemaHeader:  query.Get("schema"),
-		_trinoSessionHeader: query.Get("session_properties"),
+		XTrinoUserHeader:     user,
+		_xTrinoSourceHeader:  query.Get("source"),
+		_xTrinoCatalogHeader: query.Get("catalog"),
+		_xTrinoSchemaHeader:  query.Get("schema"),
+		_xTrinoSessionHeader: query.Get("session_properties"),
 	} {
 		if v != "" {
 			c.httpHeaders.Add(k, v)

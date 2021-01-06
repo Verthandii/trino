@@ -51,10 +51,10 @@ func (c *Config) FormatDSN() (string, error) {
 
 	if KerberosEnabled {
 		query.Add(KerberosEnabledConfig, "true")
-		query.Add(kerberosKeytabPathConfig, c.KerberosKeytabPath)
-		query.Add(kerberosPrincipalConfig, c.KerberosPrincipal)
-		query.Add(kerberosRealmConfig, c.KerberosRealm)
-		query.Add(kerberosConfigPathConfig, c.KerberosConfigPath)
+		query.Add(_kerberosKeytabPathConfig, c.KerberosKeytabPath)
+		query.Add(_kerberosPrincipalConfig, c.KerberosPrincipal)
+		query.Add(_kerberosRealmConfig, c.KerberosRealm)
+		query.Add(_kerberosConfigPathConfig, c.KerberosConfigPath)
 		if !isSSL {
 			return "", fmt.Errorf("trino: client configuration error, SSL must be enabled for secure env")
 		}
