@@ -194,6 +194,9 @@ func (qr *driverRows) fetch(allowEOF bool) error {
 		if allowEOF {
 			return io.EOF
 		}
+	} else {
+		// 有数据之后忽略 next uri
+		qr.nextURI = ""
 	}
 	if qr.columns == nil && len(qresp.Columns) > 0 {
 		qr.initColumns(&qresp)
