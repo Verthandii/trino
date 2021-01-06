@@ -27,8 +27,6 @@ type Conn struct {
 	httpHeaders     http.Header
 	kerberosClient  client.Client
 	kerberosEnabled bool
-
-	callback QueryCallBack
 }
 
 var (
@@ -143,9 +141,8 @@ func (c *Conn) Close() error {
 	return nil
 }
 
-// ResetSession resets callback to nil & implements driver.SessionResetter
+// ResetSession implements driver.SessionResetter
 func (c *Conn) ResetSession(ctx context.Context) error {
-	c.callback = nil
 	return nil
 }
 

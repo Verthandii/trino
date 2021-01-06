@@ -26,6 +26,7 @@ var (
 )
 
 func (st *driverStmt) Close() error {
+	st.callback = nil
 	return nil
 }
 
@@ -179,8 +180,8 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 	}
 
 	// first callback
-	if st.conn.callback != nil {
-		st.conn.callback.OnUpdated(QueryInfo{
+	if st.callback != nil {
+		st.callback.OnUpdated(QueryInfo{
 			Id:         sr.ID,
 			QueryStats: sr.Stats,
 			Cancel: func() error {

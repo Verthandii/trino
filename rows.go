@@ -133,11 +133,6 @@ type typeSignature struct {
 	LiteralArguments []interface{} `json:"literalArguments"`
 }
 
-type infoResponse struct {
-	QueryID string `json:"queryId"`
-	State   string `json:"state"`
-}
-
 func handleResponseError(status int, respErr stmtError) error {
 	switch respErr.ErrorName {
 	case "":
@@ -179,8 +174,8 @@ func (qr *driverRows) fetch(allowEOF bool) error {
 	qr.data = qresp.Data
 	qr.nextURI = qresp.NextURI
 
-	if qr.stmt.conn.callback != nil {
-		qr.stmt.conn.callback.OnUpdated(QueryInfo{
+	if qr.stmt.callback != nil {
+		qr.stmt.callback.OnUpdated(QueryInfo{
 			Id:         qresp.ID,
 			QueryStats: qresp.Stats,
 			Cancel:     qr.Close,
