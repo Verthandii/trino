@@ -51,3 +51,17 @@ func newErrQueryFailedFromResponse(resp *http.Response) *ErrQueryFailed {
 	qf.Reason = errors.New(reason)
 	return qf
 }
+
+func handleResponseError(status int, respErr stmtError) error {
+	switch respErr.ErrorName {
+	case "":
+		return nil
+	case "USER_CANCELLED":
+		return ErrQueryCancelled
+	default:
+		return &ErrQueryFailed{
+			StatusCode: status,
+			Reason:     &respErr,
+		}
+	}
+}

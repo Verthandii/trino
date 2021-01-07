@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -204,4 +205,17 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 		return nil, err
 	}
 	return rows, nil
+}
+
+func cancelQuery(req *http.Request, client http.Client) error {
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return errors.New(fmt.Sprintf("cancel query error: http status is %s", resp.Status))
+	}
+
+	return nil
 }

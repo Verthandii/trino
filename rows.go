@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -133,20 +132,6 @@ type typeSignature struct {
 	LiteralArguments []interface{} `json:"literalArguments"`
 }
 
-func handleResponseError(status int, respErr stmtError) error {
-	switch respErr.ErrorName {
-	case "":
-		return nil
-	case "USER_CANCELLED":
-		return ErrQueryCancelled
-	default:
-		return &ErrQueryFailed{
-			StatusCode: status,
-			Reason:     &respErr,
-		}
-	}
-}
-
 func (qr *driverRows) fetch(allowEOF bool) error {
 	hs := make(http.Header)
 	hs.Add(XTrinoUserHeader, qr.stmt.user)
@@ -207,17 +192,4 @@ func (qr *driverRows) initColumns(qresp *queryResponse) {
 		qr.columns[i] = col.Name
 		qr.coltype[i] = newTypeConverter(col.Type)
 	}
-}
-
-func cancelQuery(req *http.Request, client http.Client) error {
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("cancel query error: http status is %s", resp.Status))
-	}
-
-	return nil
 }
