@@ -107,11 +107,11 @@ func newConn(dsn string) (*Conn, error) {
 	}
 
 	for k, v := range map[string]string{
-		XTrinoUserHeader:     user,
-		_xTrinoSourceHeader:  query.Get("source"),
-		_xTrinoCatalogHeader: query.Get("catalog"),
-		_xTrinoSchemaHeader:  query.Get("schema"),
-		_xTrinoSessionHeader: query.Get("session_properties"),
+		vhs[v]["user"]:    user,
+		vhs[v]["source"]:  query.Get("source"),
+		vhs[v]["catalog"]: query.Get("catalog"),
+		vhs[v]["schema"]:  query.Get("schema"),
+		vhs[v]["session"]: query.Get("session_properties"),
 	} {
 		if v != "" {
 			c.httpHeaders.Add(k, v)

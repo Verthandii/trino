@@ -30,7 +30,7 @@ var _ driver.Rows = &driverRows{}
 func (qr *driverRows) Close() error {
 	if qr.nextURI != "" {
 		hs := make(http.Header)
-		hs.Add(XTrinoUserHeader, qr.stmt.user)
+		hs.Add(vhs[v]["user"], qr.stmt.user)
 		req, err := qr.stmt.conn.newRequest("DELETE", qr.nextURI, nil, hs)
 		if err != nil {
 			return err
@@ -134,7 +134,7 @@ type typeSignature struct {
 
 func (qr *driverRows) fetch(allowEOF bool) error {
 	hs := make(http.Header)
-	hs.Add(XTrinoUserHeader, qr.stmt.user)
+	hs.Add(vhs[v]["user"], qr.stmt.user)
 	req, err := qr.stmt.conn.newRequest("GET", qr.nextURI, nil, hs)
 	if err != nil {
 		return err

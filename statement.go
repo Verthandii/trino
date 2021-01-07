@@ -134,10 +134,10 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 		var ss []string
 		for _, arg := range args {
 			switch arg.Name {
-			case XTrinoUserHeader:
+			case vhs[v]["user"]:
 				st.user = arg.Value.(string)
-				hs.Add(XTrinoUserHeader, st.user)
-			case XTrinoCallbackHeader:
+				hs.Add(vhs[v]["user"], st.user)
+			case CallbackHeader:
 				// 正常情况下 sql.driverArgsConnLocked 中过滤掉了这个 case
 				err := st.CheckNamedValue(&arg)
 				if err != nil {
