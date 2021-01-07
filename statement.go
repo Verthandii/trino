@@ -36,6 +36,7 @@ func (st *driverStmt) NumInput() int {
 }
 
 func (st *driverStmt) Exec(args []driver.Value) (driver.Result, error) {
+
 	return nil, ErrOperationNotSupported
 }
 
@@ -134,7 +135,7 @@ func (st *driverStmt) QueryContext(ctx context.Context, args []driver.NamedValue
 		var ss []string
 		for _, arg := range args {
 			switch arg.Name {
-			case vhs[v]["user"]:
+			case UserHeader:
 				st.user = arg.Value.(string)
 				hs.Add(vhs[v]["user"], st.user)
 			case CallbackHeader:
